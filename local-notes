@@ -1,1 +1,10 @@
+
 repo imported for https://github.com/golang/go/wiki/GccgoCrossCompilation
+
+
+Can I compile riscv-gcc separately to get a cross-compiler for riscv
+https://github.com/riscv/riscv-gcc/issues/143
+
+-pthread and -fopenmp support for riscv-unknown-elf 
+https://github.com/riscv/riscv-gcc/pull/123
+
