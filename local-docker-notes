@@ -1,0 +1,62 @@
+
+
+#!/bin/bash
+# bb.bash
+
+# current uid and gid
+curr_uid=`id -u`
+curr_gid=`id -g`
+
+echo Removing old bb.dockerfile
+
+rm bb.dockerfile
+
+echo Creating bb.dockerfile ...
+
+# create bb.dockerfile:
+cat << EOF1 > bb.dockerfile
+
+ FROM ubuntu:trusty-20181217
+
+ ARG UNAME=ewxb
+
+ ARG UID=9999
+ ARG GID=9999
+
+ RUN groupadd -g \$GID \$UNAME
+ RUN useradd -m -u \$UID -g \$GID -s /bin/bash \$UNAME
+
+ RUN rm /bin/sh && ln -s bash /bin/sh
+ RUN cp -a /etc /etc-original && chmod a+rw /etc
+ RUN cp -a /opt /opt-original && chmod a+rw /opt
+
+ RUN apt-get update
+
+ # packages according to riscv/riscv-gnu-toolchain:
+ RUN apt-get install -y autoconf automake autotools-dev curl
+ RUN apt-get install -y libmpc-dev libmpfr-dev libgmp-dev gawk build-essential
+ RUN apt-get install -y bison flex texinfo gperf libtool patchutils bc zlib1g-dev libexpat-dev
+
+ USER \$UNAME
+
+ CMD /bin/bash
+EOF1
+
+echo Docker image build off bb.dockerfile ...
+docker build --build-arg UID=$(id -u) --build-arg GID=$(id -g) \
+     -f bb.dockerfile  -t ewxb_runtime .
+
+echo Docker image build finished.
+
+
+#!/bin/bash
+# sh-create.sh
+
+if [ ! -d sharedfiles ]; then
+    mkdir sharedfiles
+fi
+
+docker run -td \
+         -v $(dirname $(pwd))/$(basename $(pwd))/sharedfiles:/home/ewxb \
+         --name ewxb  \
+         ewxb_runtime
