@@ -1,4 +1,6 @@
 
+the trusty image comes with gcc 4.8.4-2ubuntu1~14.04.4
+
 
 #!/bin/bash
 # bb.bash
@@ -8,7 +10,6 @@ curr_uid=`id -u`
 curr_gid=`id -g`
 
 echo Removing old bb.dockerfile
-
 rm bb.dockerfile
 
 echo Creating bb.dockerfile ...
